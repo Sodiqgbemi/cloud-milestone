@@ -47,6 +47,19 @@
     margin:10px 0 0;
     font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   }
+  .cet-backend-link{
+    display:inline-block;
+    margin-top:16px;
+    padding:9px 14px;
+    border:1px solid var(--pink-dim);
+    border-radius:6px;
+    color:var(--pink);
+    font:600 12px -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    letter-spacing:.05em;
+    text-decoration:none;
+    transition:.2s;
+  }
+  .cet-backend-link:hover{background:var(--pink);color:var(--black);}
 
   .cet-progress-wrap{
     max-width:640px;
@@ -414,6 +427,7 @@
     <p class="cet-eyebrow">Semester 2 · Cloud Engineering</p>
     <h1 class="cet-title">Milestone Tracker</h1>
     <p class="cet-sub">Foundations → Linux → Automation → Networking → AWS</p>
+    <a class="cet-backend-link" href="backend.html">Open Backend Schedule</a>
   </div>
 
   <div class="cet-progress-wrap">
@@ -756,13 +770,13 @@
   }
 
   function toggle(key, evt){
+    const rect = evt ? evt.currentTarget.getBoundingClientRect() : null;
     state.checks[key] = !state.checks[key];
     const justChecked = state.checks[key];
     save();
     render();
     updateProgress();
-    if(justChecked && evt){
-      const rect = evt.currentTarget.getBoundingClientRect();
+    if(justChecked && rect){
       burst(rect.left+10, rect.top+10, false);
       celebrateMilestone();
     }
