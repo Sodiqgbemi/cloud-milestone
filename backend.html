@@ -1,5 +1,7 @@
 <!-- Backend Engineering — Milestone Tracker -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
   :root{
     --black:#000000;
     --panel:#0a0a0a;
@@ -11,16 +13,17 @@
     --pink-glow:#ffb9cf;
   }
   *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--black);}
   #bet-root{
     background:var(--black);
     color:var(--pink);
-    font-family:'Georgia', 'Iowan Old Style', serif;
+    font-family:'DM Sans',-apple-system,'Segoe UI',sans-serif;
     padding:28px 18px 60px;
     min-height:100%;
     position:relative;
     overflow-x:hidden;
   }
-  #bet-root .sans{font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;}
+  #bet-root .sans{font-family:'DM Sans',-apple-system,'Segoe UI',sans-serif;}
 
   .bet-header{text-align:center;margin-bottom:8px;}
   .bet-eyebrow{
@@ -29,7 +32,7 @@
     color:var(--pink-dim);margin:0 0 10px;
   }
   .bet-title{
-    color:var(--white);font-size:clamp(26px,5vw,38px);font-weight:600;
+    color:var(--white);font-family:'Playfair Display',Georgia,serif;font-size:clamp(26px,5vw,38px);font-weight:600;
     margin:0;letter-spacing:.01em;
   }
   .bet-sub{
@@ -183,6 +186,28 @@
   @media (prefers-reduced-motion: reduce){
     .bet-burst, .bet-toast, .bet-progress-fill, .bet-week-body,
     .bet-confetti-piece, .bet-firework, .bet-flash{animation:none!important;transition:none!important;}
+  }
+  @media (max-width:480px){
+    #bet-root{padding:24px 14px 48px;}
+    .bet-eyebrow{font-size:10px;letter-spacing:.18em;}
+    .bet-title{font-size:30px;}
+    .bet-sub{font-size:15px;line-height:1.55;}
+    .bet-progress-wrap{margin:22px auto 28px;}
+    .bet-phase-header{margin:26px auto 11px;}
+    .bet-phase-title{font-size:18px;line-height:1.35;}
+    .bet-week-head{padding:16px 14px;align-items:flex-start;min-height:70px;}
+    .bet-week-title{font-size:16px;line-height:1.35;}
+    .bet-week-meta{white-space:normal;text-align:right;line-height:1.45;}
+    .bet-section-label{padding:15px 14px 7px;}
+    .bet-item{gap:11px;padding:12px 14px;}
+    .bet-box{width:24px;height:24px;margin-top:0;}
+    .bet-item-text{font-size:15px;line-height:1.55;padding-top:1px;}
+    .bet-weekly-block{margin:7px 14px 16px;padding:13px;}
+    .bet-exam-block{margin:0 14px 18px;padding:13px;}
+    .bet-exam-row{gap:8px;}
+    .bet-exam-input{flex:1;min-width:0;height:42px;font-size:16px;}
+    .bet-exam-save{height:42px;padding:7px 12px;font-size:12px;}
+    .bet-toast{max-width:calc(100% - 28px);text-align:center;bottom:18px;}
   }
 </style>
 
