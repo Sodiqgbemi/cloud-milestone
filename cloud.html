@@ -530,7 +530,7 @@
   ];
 
   const STORAGE_KEY = "cloud-eng-s2-progress";
-  let state = { checks: {}, exams: {} };
+  let state = { checks: {}, exams: {}, openWeeks: {} };
   const root = document.getElementById('cet-root');
   const weeksEl = document.getElementById('cet-weeks');
   const toastEl = document.getElementById('cet-toast');
@@ -716,7 +716,13 @@
       }
       if(saved){
         const parsed = JSON.parse(saved);
-        state = Object.assign({checks:{}, exams:{}}, parsed);
+        if(parsed && typeof parsed === 'object'){
+          state = {
+            checks: parsed.checks && typeof parsed.checks === 'object' ? parsed.checks : {},
+            exams: parsed.exams && typeof parsed.exams === 'object' ? parsed.exams : {},
+            openWeeks: parsed.openWeeks && typeof parsed.openWeeks === 'object' ? parsed.openWeeks : {}
+          };
+        }
       }
     }catch(e){ /* no saved data yet */ }
     render();
@@ -789,7 +795,7 @@
     WEEKS.forEach((w, wi)=>{
       const weekDiv = document.createElement('div');
       weekDiv.className = 'cet-week';
-      if(weekDiv._open) weekDiv.classList.add('open');
+      if(state.openWeeks[wi]) weekDiv.classList.add('open');
 
       const head = document.createElement('div');
       head.className = 'cet-week-head';
@@ -876,13 +882,15 @@
 
       head.addEventListener('click', ()=>{
         const isOpen = weekDiv.classList.toggle('open');
-        weekDiv._open = isOpen;
+        state.openWeeks[wi] = isOpen;
+        save();
         body.style.maxHeight = isOpen ? body.scrollHeight + 'px' : '0px';
       });
 
       weekDiv.appendChild(head);
       weekDiv.appendChild(body);
       weeksEl.appendChild(weekDiv);
+      if(state.openWeeks[wi]) body.style.maxHeight = body.scrollHeight + 'px';
     });
   }
 
