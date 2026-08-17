@@ -1,0 +1,891 @@
+<!-- Cloud Engineering Semester 2 — Milestone Tracker -->
+<style>
+  :root{
+    --black:#000000;
+    --panel:#0a0a0a;
+    --panel-2:#111111;
+    --line:#221418;
+    --white:#ffffff;
+    --pink:#ffe1ea;
+    --pink-dim:#ffe1ea99;
+    --pink-glow:#ffb9cf;
+  }
+  *{box-sizing:border-box;}
+  #cet-root{
+    background:var(--black);
+    color:var(--pink);
+    font-family:'Georgia', 'Iowan Old Style', serif;
+    padding:28px 18px 60px;
+    min-height:100%;
+    position:relative;
+    overflow-x:hidden;
+  }
+  #cet-root .sans{font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;}
+
+  .cet-header{
+    text-align:center;
+    margin-bottom:8px;
+  }
+  .cet-eyebrow{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--pink-dim);
+    margin:0 0 10px;
+  }
+  .cet-title{
+    color:var(--white);
+    font-size:clamp(26px,5vw,38px);
+    font-weight:600;
+    margin:0;
+    letter-spacing:.01em;
+  }
+  .cet-sub{
+    color:var(--pink-dim);
+    font-size:14px;
+    margin:10px 0 0;
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+
+  .cet-progress-wrap{
+    max-width:640px;
+    margin:26px auto 34px;
+  }
+  .cet-progress-track{
+    height:6px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .cet-progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--pink-glow),var(--pink));
+    width:0%;
+    transition:width .5s ease;
+  }
+  .cet-progress-label{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:12px;
+    color:var(--pink-dim);
+    text-align:right;
+    margin-top:6px;
+    letter-spacing:.03em;
+  }
+
+  .cet-weeks{
+    max-width:640px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .cet-week{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .cet-week-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:16px 18px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .cet-week-head:hover{background:var(--panel-2);}
+  .cet-week-num{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:10px;
+    letter-spacing:.22em;
+    color:var(--pink-dim);
+    text-transform:uppercase;
+  }
+  .cet-week-title{
+    color:var(--white);
+    font-size:17px;
+    margin:2px 0 0;
+    font-weight:600;
+  }
+  .cet-week-meta{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:12px;
+    color:var(--pink-dim);
+    white-space:nowrap;
+  }
+  .cet-chevron{
+    color:var(--pink-dim);
+    font-size:14px;
+    transition:transform .25s ease;
+    flex-shrink:0;
+  }
+  .cet-week.open .cet-chevron{transform:rotate(90deg);}
+
+  .cet-week-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease;
+    border-top:1px solid transparent;
+  }
+  .cet-week.open .cet-week-body{
+    border-top:1px solid var(--line);
+  }
+
+  .cet-section-label{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--pink-dim);
+    padding:14px 18px 6px;
+  }
+
+  .cet-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:9px 18px;
+    position:relative;
+  }
+  .cet-box{
+    flex-shrink:0;
+    width:19px;height:19px;
+    margin-top:2px;
+    border-radius:50%;
+    border:1.5px solid var(--pink-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all .2s ease;
+    background:transparent;
+  }
+  .cet-box.checked{
+    background:var(--pink);
+    border-color:var(--pink);
+    box-shadow:0 0 12px var(--pink-glow);
+  }
+  .cet-box.checked::after{
+    content:'✓';
+    color:var(--black);
+    font-size:12px;
+    font-weight:bold;
+    font-family:-apple-system, sans-serif;
+  }
+  .cet-item-text{
+    font-size:14px;
+    line-height:1.5;
+    color:var(--pink);
+    cursor:pointer;
+  }
+  .cet-item-text.checked{
+    color:var(--pink-dim);
+    text-decoration:line-through;
+    text-decoration-color:var(--pink-dim);
+  }
+
+  .cet-weekly-block{
+    margin:6px 18px 16px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--panel-2);
+  }
+
+  .cet-exam-block{
+    margin:0 18px 18px;
+    padding:14px;
+    border:1px dashed var(--line);
+    border-radius:8px;
+  }
+  .cet-exam-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .cet-exam-label{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:12px;
+    letter-spacing:.05em;
+    color:var(--pink-dim);
+  }
+  .cet-exam-input{
+    width:88px;
+    background:var(--black);
+    border:1px solid var(--pink-dim);
+    color:var(--pink);
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:14px;
+    padding:7px 10px;
+    border-radius:6px;
+    outline:none;
+  }
+  .cet-exam-input:focus{border-color:var(--pink);}
+  .cet-exam-input::placeholder{color:var(--pink-dim);opacity:.6;}
+  .cet-exam-save{
+    background:transparent;
+    border:1px solid var(--pink-dim);
+    color:var(--pink);
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:12px;
+    letter-spacing:.05em;
+    padding:7px 14px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:.2s;
+  }
+  .cet-exam-save:hover{background:var(--pink);color:var(--black);}
+  .cet-exam-result{
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:13px;
+    margin-top:8px;
+    min-height:18px;
+  }
+  .cet-exam-result.pass{color:var(--pink);}
+  .cet-exam-result.retry{color:var(--pink-dim);}
+
+  .cet-footer-note{
+    text-align:center;
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:11px;
+    color:var(--pink-dim);
+    margin-top:30px;
+    opacity:.7;
+  }
+
+  /* celebration: small burst for a single milestone check */
+  .cet-burst{
+    position:fixed;
+    pointer-events:none;
+    font-size:18px;
+    z-index:9999;
+    animation:cet-burst-anim 850ms ease-out forwards;
+  }
+  @keyframes cet-burst-anim{
+    0%{transform:translate(0,0) scale(.6) rotate(0deg);opacity:1;}
+    100%{transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rot));opacity:0;}
+  }
+
+  /* celebration: full-page confetti rain for a passed exam */
+  .cet-confetti-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9998;
+    overflow:hidden;
+  }
+  .cet-confetti-piece{
+    position:absolute;
+    top:-40px;
+    opacity:0;
+    animation-name:cet-confetti-fall;
+    animation-timing-function:cubic-bezier(.35,0,.65,1);
+    animation-fill-mode:forwards;
+  }
+  @keyframes cet-confetti-fall{
+    0%{transform:translate(0,0) rotate(0deg);opacity:1;}
+    85%{opacity:1;}
+    100%{transform:translate(var(--dx),var(--fall)) rotate(var(--rot));opacity:0;}
+  }
+  .cet-firework{
+    position:fixed;
+    pointer-events:none;
+    font-size:26px;
+    z-index:9998;
+    animation:cet-firework-anim 1100ms ease-out forwards;
+  }
+  @keyframes cet-firework-anim{
+    0%{transform:translate(0,0) scale(.3);opacity:0;}
+    25%{opacity:1;transform:translate(0,0) scale(1.3);}
+    100%{transform:translate(var(--dx),var(--dy)) scale(.8);opacity:0;}
+  }
+  .cet-flash{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9997;
+    background:radial-gradient(circle at 50% 40%, rgba(255,225,234,.35), rgba(255,225,234,0) 65%);
+    opacity:0;
+    animation:cet-flash-anim 900ms ease-out forwards;
+  }
+  @keyframes cet-flash-anim{
+    0%{opacity:0;}
+    15%{opacity:1;}
+    100%{opacity:0;}
+  }
+
+  .cet-toast{
+    position:fixed;
+    left:50%;
+    bottom:26px;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--white);
+    color:var(--black);
+    font-family:-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:11px 20px;
+    border-radius:999px;
+    opacity:0;
+    transition:all .35s ease;
+    z-index:9999;
+    box-shadow:0 8px 24px rgba(255,225,234,.15);
+  }
+  .cet-toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+  .cet-toast.big{
+    font-size:16px;
+    padding:14px 26px;
+    background:linear-gradient(90deg,#ffd166,#ff6b9d,#c084fc,#5eead4);
+    color:#000;
+    box-shadow:0 10px 34px rgba(255,150,200,.35);
+  }
+
+  /* celebration: emoji rain layer for a passed exam */
+  .cet-emoji-piece{
+    position:fixed;
+    top:-60px;
+    pointer-events:none;
+    z-index:9998;
+    opacity:0;
+    animation-name:cet-emoji-fall;
+    animation-timing-function:ease-in;
+    animation-fill-mode:forwards;
+  }
+  @keyframes cet-emoji-fall{
+    0%{transform:translate(0,0) rotate(0deg) scale(.7);opacity:0;}
+    8%{opacity:1;}
+    85%{opacity:1;}
+    100%{transform:translate(var(--dx),var(--fall)) rotate(var(--rot)) scale(1);opacity:0;}
+  }
+
+  /* celebration: big center banner */
+  .cet-celebrate-banner{
+    position:fixed;
+    left:50%;
+    top:40%;
+    transform:translate(-50%,-50%) scale(.5);
+    z-index:10000;
+    pointer-events:none;
+    text-align:center;
+    font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+    font-weight:800;
+    font-size:clamp(22px,6vw,44px);
+    letter-spacing:.04em;
+    padding:18px 34px;
+    border-radius:16px;
+    background:linear-gradient(120deg,#ff6b9d,#ffd166,#5eead4,#c084fc,#60a5fa);
+    background-size:300% 300%;
+    color:#000;
+    box-shadow:0 20px 60px rgba(255,150,200,.45);
+    opacity:0;
+    animation:cet-banner-anim 2.6s cubic-bezier(.2,.9,.25,1) forwards, cet-banner-gradient 2.6s linear infinite;
+  }
+  .cet-celebrate-banner .cet-banner-emoji{ font-size:1.15em; }
+  @keyframes cet-banner-anim{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-6deg);}
+    12%{opacity:1; transform:translate(-50%,-50%) scale(1.08) rotate(2deg);}
+    20%{transform:translate(-50%,-50%) scale(1) rotate(0deg);}
+    82%{opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0deg);}
+    100%{opacity:0; transform:translate(-50%,-50%) scale(.85) rotate(0deg);}
+  }
+  @keyframes cet-banner-gradient{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .cet-burst, .cet-toast, .cet-progress-fill, .cet-week-body,
+    .cet-confetti-piece, .cet-firework, .cet-flash,
+    .cet-emoji-piece, .cet-celebrate-banner{animation:none!important;transition:none!important;}
+  }
+</style>
+
+<div id="cet-root">
+  <div class="cet-header">
+    <p class="cet-eyebrow">Semester 2 · Cloud Engineering</p>
+    <h1 class="cet-title">Milestone Tracker</h1>
+    <p class="cet-sub">Foundations → Linux → Automation → Networking → AWS</p>
+  </div>
+
+  <div class="cet-progress-wrap">
+    <div class="cet-progress-track"><div class="cet-progress-fill" id="cet-progress-fill"></div></div>
+    <div class="cet-progress-label" id="cet-progress-label">0 / 0 milestones</div>
+  </div>
+
+  <div class="cet-weeks" id="cet-weeks"></div>
+
+  <p class="cet-footer-note">Tap a week to open it · progress saves automatically</p>
+</div>
+
+<div class="cet-toast" id="cet-toast"></div>
+
+<script>
+(function(){
+  const WEEKS = [
+    {
+      title: "Cloud Computing Fundamentals",
+      weekly: "Explain what physically and logically happens when an app is deployed to the cloud.",
+      daily: [
+        "Explain client vs server and what a server actually is",
+        "Describe virtualization and Type 1 vs Type 2 hypervisors",
+        "Explain scalability, elasticity, availability, fault tolerance",
+        "Compare IaaS, PaaS, SaaS, and FaaS",
+        "Explain public, private, hybrid, and multi-cloud models",
+        "Create a Linux VM and inspect its CPU, RAM, disk, network"
+      ]
+    },
+    {
+      title: "Linux Operating System",
+      weekly: "Administer a Linux server confidently without a graphical interface.",
+      daily: [
+        "Explain the Linux kernel, shell, and distributions",
+        "Navigate the filesystem hierarchy (/etc, /var, /proc...)",
+        "Practice file management: ls, cd, mkdir, cp, mv, rm, find",
+        "Create users, groups, and configure permissions (chmod, chown)",
+        "Configure SSH and transfer files with scp",
+        "Install/remove software with apt and manage $PATH"
+      ]
+    },
+    {
+      title: "Process & System Management",
+      weekly: "Investigate what the OS is doing rather than blindly restarting a slow server.",
+      daily: [
+        "Explain processes, PID/PPID, and process states",
+        "Use ps, top, htop, kill, pkill to manage processes",
+        "Understand Linux signals (SIGTERM, SIGKILL, SIGHUP)",
+        "Monitor CPU, RAM, disk usage, and load average",
+        "Investigate stdin/stdout/stderr and file descriptors",
+        "Troubleshoot a deliberately broken/stuck process"
+      ]
+    },
+    {
+      title: "Git & systemd",
+      weekly: "Explain how a Linux server boots, starts services, and keeps apps running.",
+      daily: [
+        "Practice core Git flow: clone, add, commit, push, pull",
+        "Practice branching, merging, and resolving conflicts",
+        "Understand Git internals: blobs, trees, commits, refs",
+        "Explain systemd units, services, and targets",
+        "Manage services with systemctl and read logs with journalctl",
+        "Build a custom systemd service that auto-restarts and logs"
+      ]
+    },
+    {
+      title: "Bash Scripting & Automation",
+      weekly: "Automate Linux administration with Bash, not just run commands.",
+      daily: [
+        "Write scripts using variables, if/elif/else, and case",
+        "Write for/while loops and functions with arguments",
+        "Master redirection and pipes (>, >>, |, tee)",
+        "Use grep, sed, awk, cut, sort for text processing",
+        "Use curl, wget, tar, rsync for admin tasks",
+        "Build a script with proper error handling (set -e, exit codes)"
+      ]
+    },
+    {
+      title: "Ansible & Configuration Management",
+      weekly: "Manage many servers consistently instead of configuring them manually.",
+      daily: [
+        "Explain configuration management and configuration drift",
+        "Write an inventory and run Ansible ad-hoc commands",
+        "Write a playbook with tasks, variables, and conditionals",
+        "Understand idempotency and write idempotent tasks",
+        "Use handlers and Jinja2 templates",
+        "Provision a server: users → SSH → Nginx → PHP → app"
+      ]
+    },
+    {
+      title: "Networking & How the Internet Works",
+      weekly: "Trace a request end-to-end: DNS → IP → routing → TCP → port → TLS → HTTP → app.",
+      daily: [
+        "Explain IP addressing, CIDR, and subnets",
+        "Explain the TCP handshake and TCP vs UDP",
+        "Trace DNS resolution from browser to IP",
+        "Explain HTTP request/response, headers, status codes",
+        "Explain the TLS handshake and HTTPS",
+        "Troubleshoot with ping, traceroute, curl, dig, ss"
+      ]
+    },
+    {
+      title: "AWS & Cloud Services",
+      weekly: "Look at a basic AWS architecture and explain what, why, and its security boundary.",
+      daily: [
+        "Explain IAM users, roles, policies, least privilege",
+        "Launch and configure an EC2 instance with security groups",
+        "Create and manage an S3 bucket with policies",
+        "Build a VPC with public/private subnets and routing",
+        "Set up RDS and connect it securely to an app",
+        "Set up CloudWatch monitoring and alarms"
+      ]
+    }
+  ];
+
+  const STORAGE_KEY = "cloud-eng-s2-progress";
+  let state = { checks: {}, exams: {} };
+  const root = document.getElementById('cet-root');
+  const weeksEl = document.getElementById('cet-weeks');
+  const toastEl = document.getElementById('cet-toast');
+
+  const CELEBRATE_EMOJI = ['✓','·','✦','·'];
+  const CONFETTI_COLORS = ['#ff6b9d','#ffd166','#5eead4','#c084fc','#60a5fa','#ff9776','#a3e635','#f472b6','#fb7185','#facc15','#34d399','#818cf8'];
+  const FIREWORK_EMOJI = ['🎉','✨','🎊','⭐','🥳','🌟','💥','🎆'];
+  const RAIN_EMOJI = ['🎉','🎊','✨','⭐','🌟','💫','🏆','🥳','🎈','🚀','☁️','💯','🔥','🎯'];
+  const BANNER_MESSAGES = ['MILESTONE UNLOCKED 🏆','LEVEL UP! 🚀','CRUSHED IT 🔥','EXAM CLEARED ✅','YOU DID IT 🎉'];
+
+  function showToast(msg, big){
+    toastEl.textContent = msg;
+    toastEl.className = 'cet-toast show' + (big ? ' big' : '');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=>{ toastEl.classList.remove('show'); }, big ? 3200 : 1800);
+  }
+
+  // small celebration for a single daily/weekly checkbox
+  function burst(x, y){
+    for(let i=0;i<8;i++){
+      const el = document.createElement('div');
+      el.className = 'cet-burst';
+      el.textContent = CELEBRATE_EMOJI[Math.floor(Math.random()*CELEBRATE_EMOJI.length)];
+      el.style.left = x+'px';
+      el.style.top = y+'px';
+      el.style.color = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+      const angle = Math.random()*Math.PI*2;
+      const dist = 30+Math.random()*40;
+      el.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+      el.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+      el.style.setProperty('--rot', (Math.random()*360-180)+'deg');
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 900);
+    }
+  }
+
+  function celebrateMilestone(){
+    const layer = document.createElement('div');
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    layer.className = 'cet-confetti-layer';
+    document.body.appendChild(layer);
+
+    for(let index=0; index<55; index++){
+      const piece = document.createElement('div');
+      const size = 7 + Math.random()*7;
+      piece.className = 'cet-confetti-piece';
+      piece.style.left = Math.random()*viewportWidth+'px';
+      piece.style.width = size+'px';
+      piece.style.height = size*1.8+'px';
+      piece.style.background = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+      piece.style.setProperty('--fall', viewportHeight+70+'px');
+      piece.style.setProperty('--dx', Math.random()*180-90+'px');
+      piece.style.setProperty('--rot', Math.random()*720-360+'deg');
+      piece.style.animationDuration = 1600 + Math.random()*900+'ms';
+      piece.style.animationDelay = Math.random()*250+'ms';
+      layer.appendChild(piece);
+    }
+
+    setTimeout(()=>layer.remove(), 2800);
+  }
+
+  // elaborate, colorful, full-page celebration for a passing exam score
+  function celebratePage(){
+    const vw = window.innerWidth, vh = window.innerHeight;
+
+    // screen-wide soft flash, doubled for extra pop
+    for(let f=0; f<2; f++){
+      setTimeout(()=>{
+        const flash = document.createElement('div');
+        flash.className = 'cet-flash';
+        flash.style.background = f===0
+          ? 'radial-gradient(circle at 50% 40%, rgba(255,225,234,.4), rgba(255,225,234,0) 65%)'
+          : 'radial-gradient(circle at 50% 60%, rgba(196,132,252,.3), rgba(196,132,252,0) 65%)';
+        document.body.appendChild(flash);
+        setTimeout(()=>flash.remove(), 950);
+      }, f*350);
+    }
+
+    // big animated congratulations banner
+    const banner = document.createElement('div');
+    banner.className = 'cet-celebrate-banner';
+    const msg = BANNER_MESSAGES[Math.floor(Math.random()*BANNER_MESSAGES.length)];
+    banner.innerHTML = msg;
+    document.body.appendChild(banner);
+    setTimeout(()=>banner.remove(), 2700);
+
+    // dense confetti rain across the whole page, in two staggered waves
+    const layer = document.createElement('div');
+    layer.className = 'cet-confetti-layer';
+    document.body.appendChild(layer);
+
+    function spawnConfetti(count, delayOffset){
+      for(let i=0;i<count;i++){
+        const piece = document.createElement('div');
+        piece.className = 'cet-confetti-piece';
+        const color = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+        const isCircle = Math.random() > 0.5;
+        const size = 6 + Math.random()*9;
+        piece.style.left = (Math.random()*vw)+'px';
+        piece.style.width = size+'px';
+        piece.style.height = (isCircle ? size : size*2.2)+'px';
+        piece.style.background = color;
+        piece.style.borderRadius = isCircle ? '50%' : '2px';
+        const fall = vh + 80;
+        const drift = (Math.random()*260-130);
+        const rot = (Math.random()*900-450);
+        piece.style.setProperty('--fall', fall+'px');
+        piece.style.setProperty('--dx', drift+'px');
+        piece.style.setProperty('--rot', rot+'deg');
+        const duration = 2200 + Math.random()*2200;
+        const delay = delayOffset + Math.random()*500;
+        piece.style.animationDuration = duration+'ms';
+        piece.style.animationDelay = delay+'ms';
+        layer.appendChild(piece);
+      }
+    }
+    spawnConfetti(160, 0);
+    setTimeout(()=>spawnConfetti(90, 0), 600);
+    setTimeout(()=>layer.remove(), 5600);
+
+    // emoji rain layer, mixed in with the confetti
+    const emojiLayer = document.createElement('div');
+    emojiLayer.className = 'cet-confetti-layer';
+    document.body.appendChild(emojiLayer);
+
+    function spawnEmojiRain(count, delayOffset){
+      for(let i=0;i<count;i++){
+        const piece = document.createElement('div');
+        piece.className = 'cet-emoji-piece';
+        piece.textContent = RAIN_EMOJI[Math.floor(Math.random()*RAIN_EMOJI.length)];
+        piece.style.left = (Math.random()*vw)+'px';
+        piece.style.fontSize = (34 + Math.random()*22)+'px';
+        const fall = vh + 120;
+        const drift = (Math.random()*320-160);
+        const rot = (Math.random()*480-240);
+        piece.style.setProperty('--fall', fall+'px');
+        piece.style.setProperty('--dx', drift+'px');
+        piece.style.setProperty('--rot', rot+'deg');
+        const duration = 2600 + Math.random()*2200;
+        const delay = delayOffset + Math.random()*700;
+        piece.style.animationDuration = duration+'ms';
+        piece.style.animationDelay = delay+'ms';
+        emojiLayer.appendChild(piece);
+      }
+    }
+    spawnEmojiRain(60, 100);
+    setTimeout(()=>spawnEmojiRain(45, 0), 700);
+    setTimeout(()=>spawnEmojiRain(35, 0), 1400);
+    setTimeout(()=>emojiLayer.remove(), 5800);
+
+    // a wave of firework bursts scattered across the whole page
+    const fireworkSpots = 12;
+    for(let i=0;i<fireworkSpots;i++){
+      setTimeout(()=>{
+        const x = vw*0.05 + Math.random()*vw*0.9;
+        const y = vh*0.08 + Math.random()*vh*0.75;
+        const burstSize = 6 + Math.floor(Math.random()*4);
+        for(let j=0;j<burstSize;j++){
+          const fw = document.createElement('div');
+          fw.className = 'cet-firework';
+          fw.textContent = FIREWORK_EMOJI[Math.floor(Math.random()*FIREWORK_EMOJI.length)];
+          fw.style.left = x+'px';
+          fw.style.top = y+'px';
+          fw.style.fontSize = (32 + Math.random()*18)+'px';
+          const angle = Math.random()*Math.PI*2;
+          const dist = 60+Math.random()*110;
+          fw.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+          fw.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+          document.body.appendChild(fw);
+          setTimeout(()=>fw.remove(), 1200);
+        }
+      }, i*200);
+    }
+  }
+
+  async function load(){
+    try{
+      let saved = window.localStorage.getItem(STORAGE_KEY);
+      if(window.storage){
+        const res = await window.storage.get(STORAGE_KEY, false);
+        saved = res && res.value ? res.value : saved;
+      }
+      if(saved){
+        const parsed = JSON.parse(saved);
+        state = Object.assign({checks:{}, exams:{}}, parsed);
+      }
+    }catch(e){ /* no saved data yet */ }
+    render();
+  }
+
+  async function save(){
+    const saved = JSON.stringify(state);
+    try{
+      window.localStorage.setItem(STORAGE_KEY, saved);
+    }catch(e){
+      console.error('Save failed', e);
+    }
+    try{
+      if(window.storage) await window.storage.set(STORAGE_KEY, saved, false);
+    }catch(e){ /* localStorage remains the persistent fallback */ }
+  }
+
+  function updateProgress(){
+    let total = 0, done = 0;
+    WEEKS.forEach((w, wi)=>{
+      w.daily.forEach((_, di)=>{
+        total++;
+        if(state.checks[`d-${wi}-${di}`]) done++;
+      });
+      total++;
+      if(state.checks[`w-${wi}`]) done++;
+    });
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById('cet-progress-fill').style.width = pct+'%';
+    document.getElementById('cet-progress-label').textContent = `${done} / ${total} milestones`;
+  }
+
+  function toggle(key, evt){
+    state.checks[key] = !state.checks[key];
+    const justChecked = state.checks[key];
+    save();
+    render();
+    updateProgress();
+    if(justChecked && evt){
+      const rect = evt.currentTarget.getBoundingClientRect();
+      burst(rect.left+10, rect.top+10, false);
+      celebrateMilestone();
+    }
+  }
+
+  async function submitExam(wi, inputEl, resultEl){
+    const val = parseInt(inputEl.value, 10);
+    if(isNaN(val) || val < 0 || val > 100){
+      resultEl.textContent = "Enter a score between 0 and 100";
+      resultEl.className = "cet-exam-result retry";
+      return;
+    }
+    state.exams[wi] = val;
+    await save();
+    if(val >= 80){
+      resultEl.textContent = `${val}% — passed with room to spare ✦`;
+      resultEl.className = "cet-exam-result pass";
+      const rect = inputEl.getBoundingClientRect();
+      burst(rect.left+40, rect.top, true);
+      celebratePage();
+      showToast(`Week ${wi+1} exam cleared — ${val}%`);
+    }else{
+      resultEl.textContent = `${val}% — below 80, worth another pass`;
+      resultEl.className = "cet-exam-result retry";
+    }
+  }
+
+  function render(){
+    weeksEl.innerHTML = '';
+    WEEKS.forEach((w, wi)=>{
+      const weekDiv = document.createElement('div');
+      weekDiv.className = 'cet-week';
+      if(weekDiv._open) weekDiv.classList.add('open');
+
+      const head = document.createElement('div');
+      head.className = 'cet-week-head';
+
+      const doneDaily = w.daily.filter((_,di)=>state.checks[`d-${wi}-${di}`]).length;
+      const weeklyDone = state.checks[`w-${wi}`];
+      const examScore = state.exams[wi];
+
+      head.innerHTML = `
+        <div>
+          <div class="cet-week-num">Week ${wi+1}</div>
+          <div class="cet-week-title">${w.title}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="cet-week-meta">${doneDaily}/${w.daily.length}${weeklyDone?' · ✓ mastery':''}${examScore!==undefined?' · exam '+examScore+'%':''}</div>
+          <div class="cet-chevron">›</div>
+        </div>`;
+
+      const body = document.createElement('div');
+      body.className = 'cet-week-body';
+
+      const dailyLabel = document.createElement('div');
+      dailyLabel.className = 'cet-section-label';
+      dailyLabel.textContent = 'Daily milestones';
+      body.appendChild(dailyLabel);
+
+      w.daily.forEach((text, di)=>{
+        const key = `d-${wi}-${di}`;
+        const checked = !!state.checks[key];
+        const item = document.createElement('div');
+        item.className = 'cet-item';
+        item.innerHTML = `
+          <div class="cet-box ${checked?'checked':''}"></div>
+          <div class="cet-item-text ${checked?'checked':''}">${text}</div>`;
+        const doToggle = (e)=>toggle(key, e);
+        item.querySelector('.cet-box').addEventListener('click', doToggle);
+        item.querySelector('.cet-item-text').addEventListener('click', doToggle);
+        body.appendChild(item);
+      });
+
+      const weeklyLabel = document.createElement('div');
+      weeklyLabel.className = 'cet-section-label';
+      weeklyLabel.textContent = 'Weekly mastery milestone';
+      body.appendChild(weeklyLabel);
+
+      const weeklyBlock = document.createElement('div');
+      weeklyBlock.className = 'cet-weekly-block';
+      const wKey = `w-${wi}`;
+      const wChecked = !!state.checks[wKey];
+      weeklyBlock.innerHTML = `
+        <div class="cet-item" style="padding:0;">
+          <div class="cet-box ${wChecked?'checked':''}"></div>
+          <div class="cet-item-text ${wChecked?'checked':''}">${w.weekly}</div>
+        </div>`;
+      const wToggle = (e)=>toggle(wKey, e);
+      weeklyBlock.querySelector('.cet-box').addEventListener('click', wToggle);
+      weeklyBlock.querySelector('.cet-item-text').addEventListener('click', wToggle);
+      body.appendChild(weeklyBlock);
+
+      const examLabel = document.createElement('div');
+      examLabel.className = 'cet-section-label';
+      examLabel.textContent = 'Weekly exam score';
+      body.appendChild(examLabel);
+
+      const examBlock = document.createElement('div');
+      examBlock.className = 'cet-exam-block';
+      examBlock.innerHTML = `
+        <div class="cet-exam-row">
+          <span class="cet-exam-label">Score</span>
+          <input type="number" min="0" max="100" class="cet-exam-input" placeholder="0–100" value="${examScore!==undefined?examScore:''}">
+          <button class="cet-exam-save">Save score</button>
+        </div>
+        <div class="cet-exam-result ${examScore!==undefined?(examScore>=80?'pass':'retry'):''}">${
+          examScore!==undefined
+            ? (examScore>=80 ? `${examScore}% — passed with room to spare ✦` : `${examScore}% — below 80, worth another pass`)
+            : ''
+        }</div>`;
+      const input = examBlock.querySelector('.cet-exam-input');
+      const btn = examBlock.querySelector('.cet-exam-save');
+      const resultEl = examBlock.querySelector('.cet-exam-result');
+      btn.addEventListener('click', ()=>submitExam(wi, input, resultEl));
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitExam(wi, input, resultEl); });
+      body.appendChild(examBlock);
+
+      head.addEventListener('click', ()=>{
+        const isOpen = weekDiv.classList.toggle('open');
+        weekDiv._open = isOpen;
+        body.style.maxHeight = isOpen ? body.scrollHeight + 'px' : '0px';
+      });
+
+      weekDiv.appendChild(head);
+      weekDiv.appendChild(body);
+      weeksEl.appendChild(weekDiv);
+    });
+  }
+
+  load().then(updateProgress);
+})();
+</script>
